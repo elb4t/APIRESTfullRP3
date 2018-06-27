@@ -5,10 +5,12 @@ import android.util.Log
 import org.json.JSONException
 import org.json.JSONObject
 import org.restlet.data.MediaType
+import org.restlet.data.Method
 import org.restlet.ext.json.JsonRepresentation
 import org.restlet.representation.Representation
 import org.restlet.representation.StringRepresentation
 import org.restlet.resource.Get
+import org.restlet.resource.Options
 import org.restlet.resource.Post
 import org.restlet.resource.ServerResource
 
@@ -23,7 +25,7 @@ class LEDResource : ServerResource() {
         } catch (e: Exception) {
             Log.e(TAG, "Error en JSONObject: ", e)
         }
-
+        response.accessControlAllowOrigin = "*"
         return StringRepresentation(result.toString(), MediaType.APPLICATION_ALL_JSON)
     }
 
@@ -48,7 +50,22 @@ class LEDResource : ServerResource() {
         } catch (e: JSONException) {
             Log.e(TAG, "Error en JSONObject: ", e)
         }
-
+        response.accessControlAllowOrigin = "*"
         return StringRepresentation(fullresult.toString(), MediaType.APPLICATION_ALL_JSON)
+    }
+
+    @Options
+    fun getCorsSupport() {
+        val head = HashSet<String>()
+        head.add("X-Requested-With")
+        head.add("Content-Type")
+        head.add("Accept")
+        response.accessControlAllowHeaders = head
+        val methods = HashSet<Method>()
+        methods.add(Method.GET)
+        methods.add(Method.POST)
+        methods.add(Method.OPTIONS)
+        response.accessControlAllowMethods = methods
+        response.accessControlAllowOrigin = "*"
     }
 }
